@@ -106,9 +106,9 @@
                                          v-on:click="deleteJob(props.rowData)">
                                 Delete
                             </base-button>
-                            <base-button type="danger" size="sm"
-                                         v-on:click="sse(props.rowData)">
-                                sse
+                            <base-button type="success" size="sm"
+                                         v-on:click="detail(props.rowData)">
+                                Detail
                             </base-button>
                         </div>
                     </vuetable>
@@ -116,17 +116,30 @@
                 <div class="card-footer" style="background-color: transparent">
                 </div>
             </card>
-
         </div>
+        <modal :show.sync="modals.modal" scrollable
+               modal-classes="modal-dialog-centered modal-xl">
+            <h6 slot="header" class="modal-title" id="modal-title-default">Job - Detail</h6>
+            <div style="overflow: scroll;">
+                <vuetable ref="vuetable"
+                          :data=jobDestinationViewList
+                          :fields=JobDestfields>
+                </vuetable>
+            </div>
+        </modal>
     </section>
 </template>
 
 <script>
     import PublicService from "../services/public.service"
     import ProjectService from "../services/public.service.project";
+    import Modal from "@/components/Modal";
 
     export default {
         name: 'job',
+        components: {
+            Modal
+        },
         data() {
             return {
                 submitted: false,
@@ -134,12 +147,16 @@
                 autoStart: false,
                 message: '',
                 jobList: [],
+                jobDestinationViewList: [],
                 value: [],
                 valueProject: [],
                 options: [],
                 optionsProject: [],
                 inputs: [],
                 appName: '',
+                modals: {
+                    modal: false,
+                },
                 fields: [
                     {
                         name: "createdBy",
@@ -166,7 +183,40 @@
                         titleClass: 'center aligned',
                         dataClass: 'right aligned'
                     }
+                ],
+                JobDestfields: [
+                    {
+                        name: "downloadPath",
+                        title: 'Download Path',
+                        width: "20%"
+                    },
+                    {
+                        name: "download",
+                        title: 'Download',
+                        width: "20%"
+                    },
+                    {
+                        name: "downloadDateTime",
+                        title: 'Download DateTime',
+                        width: "20%"
+                    },
+                    {
+                        name: "downloadUrl",
+                        title: 'Download Url',
+                        width: "20%"
+                    },
+                    {
+                        name: "send",
+                        title: 'Send',
+                        width: "20%"
+                    },
+                    {
+                        name: "sendDateTime",
+                        title: 'Send DateTime',
+                        width: "20%"
+                    },
                 ]
+
             };
         },
 
@@ -203,7 +253,7 @@
                     "jobDto": {
                         "createdById": this.valueProject.id,
                         "createdBy": this.valueProject.name,
-                        "autoStart" : this.autoStart,
+                        "autoStart": this.autoStart,
                     },
                     "ftpServerDestination": this.value,
                     "fileList": this.inputs
@@ -255,14 +305,14 @@
                 );
             },
 
-            sse: function (fts) {
-                PublicService.sse(fts).then(
+            detail: function (fts) {
+                this.modals.modal = true;
+                PublicService.detail(fts).then(
                     response => {
-                        this.jobList = response.data.jobList;
-                        this.reload();
+                        this.jobDestinationViewList = response.data.jobDestinationViewList;
                     },
                     error => {
-                        this.jobList = error.response.data;
+                        this.jobDestinationViewList = error.response.data;
                     }
                 );
             },

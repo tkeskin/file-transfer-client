@@ -7,7 +7,7 @@ import './assets/app.scss';
 import {extend, ValidationObserver, ValidationProvider} from 'vee-validate';
 import {required} from 'vee-validate/dist/rules';
 import Multiselect from 'vue-multiselect';
-import {Vuetable, VuetablePagination} from 'vuetable-2';
+import Vuetable from 'vuetable-2';
 import FadeTransition from 'vue2-transitions'
 
 Vue.config.productionTip = false;
@@ -16,7 +16,6 @@ Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 Vue.component('multiselect', Multiselect);
 Vue.component('Vuetable', Vuetable);
-Vue.component('VuetablePagination', VuetablePagination);
 Vue.use(FadeTransition);
 
 extend('required', {

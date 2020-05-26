@@ -27,8 +27,8 @@ class PublicService {
         return http.get("/delete-job/" + fts.id);
     }
 
-    sse(fts) {
-        return http.get("/stream-sse-mvc/" + fts.id);
+    detail(fts) {
+        return http.get("/job-destination/" + fts.id);
     }
 
     testConnection(ftpServerDto) {
