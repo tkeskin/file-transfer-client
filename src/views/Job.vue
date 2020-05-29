@@ -79,7 +79,7 @@
                 <div class="card-footer" style="background-color: transparent">
                     <base-alert :type="successful ? 'success' : 'default'" v-if="message"
                                 dismissible>
-                        <span class="alert-inner--text"><strong>{{message}}</strong></span>
+                        <span class="alert-inner-text"><strong>{{message}}</strong></span>
                     </base-alert>
                 </div>
             </card>
@@ -91,8 +91,13 @@
                 <div class="card-body">
                     <vuetable ref="vuetable"
                               :api-mode="false"
-                              :data=jobList
-                              :fields=fields>
+                              :css="css.table"
+                              :sort-order="sortOrder"
+                              :fields="fields"
+                              :per-page="perPage"
+                              :data-manager="dataManager"
+                              pagination-path="pagination"
+                              @vuetable:pagination-data="onPaginationData">
                         <div slot="actions" slot-scope="props">
                             <base-button type="primary" size="sm"
                                          v-on:click="startJob(props.rowData)">
@@ -112,6 +117,11 @@
                             </base-button>
                         </div>
                     </vuetable>
+                    <vuetable-pagination ref="pagination"
+                                         class="pull-right"
+                                         :css="css.pagination"
+                                         @vuetable-pagination:change-page="onChangePage">
+                    </vuetable-pagination>
                 </div>
                 <div class="card-footer" style="background-color: transparent">
                 </div>
@@ -121,9 +131,9 @@
                modal-classes="modal-dialog-centered modal-xl">
             <h6 slot="header" class="modal-title" id="modal-title-default">Job - Detail</h6>
             <div style="overflow: scroll;">
-                <vuetable ref="vuetable"
-                          :data=jobDestinationViewList
-                          :fields=JobDestfields>
+                <vuetable
+                        :data=jobDestinationViewList
+                        :fields=jobDestfields>
                 </vuetable>
             </div>
         </modal>
@@ -133,15 +143,22 @@
 <script>
     import PublicService from "../services/public.service"
     import ProjectService from "../services/public.service.project";
+    import VuetablePagination from "../components/VuetablePaginationBootstrap4.vue";
+    import CssConfig from "../components/lib/VuetableConfig";
     import Modal from "@/components/Modal";
+    import _ from "lodash";
 
     export default {
         name: 'job',
+
         components: {
-            Modal
+            Modal,
+            VuetablePagination
         },
+
         data() {
             return {
+                perPage: 5,
                 submitted: false,
                 successful: false,
                 autoStart: false,
@@ -157,67 +174,70 @@
                 modals: {
                     modal: false,
                 },
+
                 fields: [
                     {
                         name: "createdBy",
-                        title: 'Created by'
+                        title: '<span class="orange glyphicon glyphicon-user"></span> Created By',
+                        sortField: 'createdBy'
                     },
                     {
                         name: "createdDateTime",
-                        title: 'Created time',
-                        titleClass: 'center aligned',
-                        dataClass: 'center aligned'
+                        title: 'Created time'
                     },
                     {
                         name: "jobStatus",
                         title: 'Job status',
-                        titleClass: 'center aligned',
-                        dataClass: 'right aligned',
                         formatter(value) {
                             return value === 0 ? 'Beklemede' : 'Tamamlandı'
                         }
                     },
                     {
                         name: "actions",
-                        title: 'Actions',
-                        titleClass: 'center aligned',
-                        dataClass: 'right aligned'
+                        title: 'Actions'
                     }
                 ],
-                JobDestfields: [
+                css: CssConfig,
+
+                sortOrder: [
+                    {field: 'createdBy', direction: 'asc'}
+                ],
+
+                jobDestfields: [
                     {
                         name: "downloadPath",
-                        title: 'Download Path',
-                        width: "20%"
+                        title: 'Download Path'
                     },
                     {
                         name: "download",
-                        title: 'Download',
-                        width: "20%"
+                        title: 'Download'
                     },
                     {
                         name: "downloadDateTime",
-                        title: 'Download DateTime',
-                        width: "20%"
+                        title: 'Download DateTime'
                     },
                     {
                         name: "downloadUrl",
-                        title: 'Download Url',
-                        width: "20%"
+                        title: 'Download Url'
                     },
                     {
                         name: "send",
-                        title: 'Send',
-                        width: "20%"
+                        title: 'Send'
                     },
                     {
                         name: "sendDateTime",
-                        title: 'Send DateTime',
-                        width: "20%"
+                        title: 'Send DateTime'
                     },
                 ]
 
             };
+        },
+
+        watch: {
+            // eslint-disable-next-line no-unused-vars
+            jobList(newVal, oldVal) {
+                this.$refs.vuetable.refresh();
+            }
         },
 
         mounted() {
@@ -351,6 +371,44 @@
                 this.getJobList();
                 this.getFtpServer();
                 this.getProject();
+            },
+
+            onPaginationData(paginationData) {
+                this.$refs.pagination.setPaginationData(paginationData);
+                this.$refs.paginationInfo.setPaginationData(paginationData);
+            },
+
+            onChangePage(page) {
+                this.$refs.vuetable.changePage(page)
+            },
+
+            dataManager(sortOrder, pagination) {
+                if (this.jobList.length < 1) return;
+
+                let local = this.jobList;
+
+                // sortOrder can be empty, so we have to check for that as well
+                if (sortOrder.length > 0) {
+                    local = _.orderBy(
+                        local,
+                        sortOrder[0].sortField,
+                        sortOrder[0].direction
+                    );
+                }
+
+
+                pagination = this.$refs.vuetable.makePagination(
+                    local.length,
+                    this.perPage
+                );
+
+                let from = pagination.from - 1;
+                let to = from + this.perPage;
+
+                return {
+                    pagination: pagination,
+                    data: _.slice(local, from, to)
+                };
             }
         }
     };

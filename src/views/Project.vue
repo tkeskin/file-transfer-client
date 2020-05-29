@@ -51,8 +51,12 @@
                 <div class="card-body">
                     <vuetable ref="vuetable"
                               :api-mode="false"
-                              :data=projectList
-                              :fields=fields>
+                              :css="css.table"
+                              :fields=fields
+                              :per-page=perPage
+                              :data-manager="dataManager"
+                              pagination-path="pagination"
+                              @vuetable:pagination-data="onPaginationData">
                         <div slot="actions" slot-scope="props">
                             <base-button type="primary" size="sm"
                                          v-on:click="editProject(props.rowData)">
@@ -64,6 +68,12 @@
                             </base-button>
                         </div>
                     </vuetable>
+
+                        <vuetable-pagination ref="pagination"
+                                             class="pull-right"
+                                             :css=css.pagination
+                                             @vuetable-pagination:change-page="onChangePage">
+                        </vuetable-pagination>
                 </div>
                 <div class="card-footer" style="background-color: transparent">
                 </div>
@@ -76,11 +86,21 @@
 <script>
     import ProjectDto from '../models/project';
     import ProjectService from "../services/public.service.project"
+    import VuetablePagination from "../components/VuetablePaginationBootstrap4.vue";
+    import CssConfig from "../components/lib/VuetableConfig";
+    import _ from "lodash";
 
     export default {
         name: 'project',
+
+        components: {
+            VuetablePagination,
+        },
+
         data() {
             return {
+                perPage: 3,
+                css: CssConfig,
                 projectDto: new ProjectDto('', '', ''),
                 submitted: false,
                 successful: false,
@@ -93,18 +113,21 @@
                     },
                     {
                         name: "downloadPath",
-                        title: 'Download Path',
-                        titleClass: 'center aligned',
-                        dataClass: 'center aligned'
+                        title: 'Download Path'
                     },
                     {
                         name: "actions",
-                        title: 'Actions',
-                        titleClass: 'center aligned',
-                        dataClass: 'right aligned'
+                        title: 'Actions'
                     }
                 ]
             };
+        },
+
+        watch: {
+            // eslint-disable-next-line no-unused-vars
+            projectList(newVal, oldVal) {
+                this.$refs.vuetable.refresh();
+            }
         },
 
         mounted() {
@@ -165,6 +188,44 @@
                 requestAnimationFrame(() => {
                     this.$refs.observer.reset();
                 });
+            },
+
+            onPaginationData(paginationData) {
+                this.$refs.pagination.setPaginationData(paginationData);
+                this.$refs.paginationInfo.setPaginationData(paginationData);
+            },
+
+            onChangePage(page) {
+                this.$refs.vuetable.changePage(page)
+            },
+
+            dataManager(sortOrder, pagination) {
+                if (this.projectList.length < 1) return;
+
+                let local = this.projectList;
+
+                // sortOrder can be empty, so we have to check for that as well
+                if (sortOrder.length > 0) {
+                    local = _.orderBy(
+                        local,
+                        sortOrder[0].sortField,
+                        sortOrder[0].direction
+                    );
+                }
+
+
+                pagination = this.$refs.vuetable.makePagination(
+                    local.length,
+                    this.perPage
+                );
+
+                let from = pagination.from - 1;
+                let to = from + this.perPage;
+
+                return {
+                    pagination: pagination,
+                    data: _.slice(local, from, to)
+                };
             }
         }
     };
