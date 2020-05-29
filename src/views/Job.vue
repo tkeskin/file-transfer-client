@@ -117,13 +117,13 @@
                             </base-button>
                         </div>
                     </vuetable>
-                    <vuetable-pagination ref="pagination"
-                                         class="pull-right"
-                                         :css="css.pagination"
-                                         @vuetable-pagination:change-page="onChangePage">
-                    </vuetable-pagination>
-                </div>
-                <div class="card-footer" style="background-color: transparent">
+                    <div style="margin-top:10px">
+                        <vuetable-pagination ref="pagination"
+                                             class="pull-right"
+                                             :css="css.pagination"
+                                             @vuetable-pagination:change-page="onChangePage">
+                        </vuetable-pagination>
+                    </div>
                 </div>
             </card>
         </div>
@@ -178,16 +178,16 @@
                 fields: [
                     {
                         name: "createdBy",
-                        title: '<span class="orange glyphicon glyphicon-user"></span> Created By',
+                        title: '<i class="fa fa-user"></i>  Created By',
                         sortField: 'createdBy'
                     },
                     {
                         name: "createdDateTime",
-                        title: 'Created time'
+                        title: '<i class="fa fa-clock-o"></i> Created time'
                     },
                     {
                         name: "jobStatus",
-                        title: 'Job status',
+                        title: '<i class="fa fa-eye"></i> Job status',
                         formatter(value) {
                             return value === 0 ? 'Beklemede' : 'Tamamlandı'
                         }
@@ -375,7 +375,6 @@
 
             onPaginationData(paginationData) {
                 this.$refs.pagination.setPaginationData(paginationData);
-                this.$refs.paginationInfo.setPaginationData(paginationData);
             },
 
             onChangePage(page) {

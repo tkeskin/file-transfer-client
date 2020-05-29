@@ -91,8 +91,12 @@
                 <div class="card-body">
                     <vuetable ref="vuetable"
                               :api-mode="false"
-                              :data=ftpServerList
-                              :fields=fields>
+                              :css="css.table"
+                              :fields="fields"
+                              :per-page="perPage"
+                              :data-manager="dataManager"
+                              pagination-path="pagination"
+                              @vuetable:pagination-data="onPaginationData">
                         <div slot="actions" slot-scope="props">
                             <base-button type="primary" size="sm"
                                          v-on:click="editFtpServer(props.rowData)">
@@ -104,8 +108,13 @@
                             </base-button>
                         </div>
                     </vuetable>
-                </div>
-                <div class="card-footer" style="background-color: transparent">
+                    <div style="margin-top:10px">
+                        <vuetable-pagination ref="pagination"
+                                             class="pull-right"
+                                             :css="css.pagination"
+                                             @vuetable-pagination:change-page="onChangePage">
+                        </vuetable-pagination>
+                    </div>
                 </div>
             </card>
 
@@ -115,10 +124,19 @@
 
 <script>
     import FtpServerDto from '../models/ftp-server';
-    import PublicService from "../services/public.service"
+    import PublicService from "../services/public.service";
+    import VuetablePagination from "../components/VuetablePaginationBootstrap4.vue";
+    import CssConfig from "../components/lib/VuetableConfig";
+    import _ from "lodash";
+
 
     export default {
         name: 'ftpServer',
+
+        components: {
+            VuetablePagination
+        },
+
         data() {
             return {
                 ftpServerDto: new FtpServerDto('', '', '', '', '',
@@ -127,30 +145,32 @@
                 successful: false,
                 message: '',
                 ftpServerList: [],
+                perPage: 5,
+                css: CssConfig,
                 fields: [
                     {
                         name: "name",
-                        title: 'Name'
+                        title: '<i class="fa fa-user"></i> Name'
                     },
                     {
                         name: "protocol",
-                        title: 'Protocol'
+                        title: '<i class="fa fa-user"></i> Protocol'
                     },
                     {
                         name: "hostAdress",
-                        title: 'Host Adress'
+                        title: '<i class="fa fa-user"></i> Host Adress'
                     },
                     {
                         name: "port",
-                        title: 'Port'
+                        title: '<i class="fa fa-user"></i> Port'
                     },
                     {
                         name: "username",
-                        title: 'Username'
+                        title: '<i class="fa fa-user"></i> Username'
                     },
                     {
                         name: "password",
-                        title: 'Password',
+                        title: '<i class="fa fa-user"></i> Password',
                         formatter() {
                             return '*****'
                         }
@@ -162,9 +182,18 @@
                 ]
             };
         },
+
+        watch: {
+            // eslint-disable-next-line no-unused-vars
+            ftpServerList(newVal, oldVal) {
+                this.$refs.vuetable.refresh();
+            }
+        },
+
         mounted() {
             this.getFtpServer();
         },
+
         methods: {
             getFtpServer() {
                 PublicService.getFtpServer().then(
@@ -242,6 +271,43 @@
                     );
                 });
 
+            },
+
+            onPaginationData(paginationData) {
+                this.$refs.pagination.setPaginationData(paginationData);
+            },
+
+            onChangePage(page) {
+                this.$refs.vuetable.changePage(page)
+            },
+
+            dataManager(sortOrder, pagination) {
+                if (this.ftpServerList.length < 1) return;
+
+                let local = this.ftpServerList;
+
+                // sortOrder can be empty, so we have to check for that as well
+                if (sortOrder.length > 0) {
+                    local = _.orderBy(
+                        local,
+                        sortOrder[0].sortField,
+                        sortOrder[0].direction
+                    );
+                }
+
+
+                pagination = this.$refs.vuetable.makePagination(
+                    local.length,
+                    this.perPage
+                );
+
+                let from = pagination.from - 1;
+                let to = from + this.perPage;
+
+                return {
+                    pagination: pagination,
+                    data: _.slice(local, from, to)
+                };
             }
         }
     };

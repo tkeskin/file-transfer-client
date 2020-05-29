@@ -68,17 +68,15 @@
                             </base-button>
                         </div>
                     </vuetable>
-
+                    <div style="margin-top:10px">
                         <vuetable-pagination ref="pagination"
                                              class="pull-right"
-                                             :css=css.pagination
+                                             :css="css.pagination"
                                              @vuetable-pagination:change-page="onChangePage">
                         </vuetable-pagination>
-                </div>
-                <div class="card-footer" style="background-color: transparent">
+                    </div>
                 </div>
             </card>
-
         </div>
     </section>
 </template>

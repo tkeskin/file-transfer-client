@@ -24,7 +24,7 @@
     "vue-flatpickr-component": "^8.1.1",
     "vue-lazyload": "^1.2.6",
     "vue-multiselect": "^2.1.6",
-    "vue-router": "^3.2.0",
+    "vue-router": "^3.3.2",
     "vue2-transitions": "^0.3.0",
     "vuetable-2": "next",
     "vuex": "^3.4.0"
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.4.1",
     "@vue/cli-plugin-eslint": "^4.4.1",
-    "@vue/cli-plugin-pwa": "^3.12.1",
+    "@vue/cli-plugin-pwa": "^4.4.1",
     "@vue/cli-service": "^4.4.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^5.16.0",
