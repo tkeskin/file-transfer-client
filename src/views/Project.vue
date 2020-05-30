@@ -85,7 +85,9 @@
     import ProjectDto from '../models/project';
     import ProjectService from "../services/public.service.project"
     import CssConfig from "../components/lib/vuetableConfig";
+    import SwalConfig from "../components/lib/swalConfig";
     import _ from "lodash";
+    import swalConfig from "../components/lib/swalConfig";
 
     export default {
         name: 'project',
@@ -93,6 +95,7 @@
         data() {
             return {
                 css: CssConfig,
+                swal: SwalConfig,
                 projectDto: new ProjectDto('', '', ''),
                 submitted: false,
                 successful: false,
@@ -140,17 +143,24 @@
             },
 
             saveProject() {
-                ProjectService.saveProject(this.projectDto).then(
-                    response => {
-                        this.message = response.data;
-                        this.getProject();
-                        this.resetForm();
-                    },
-                    error => {
-                        this.message = error.message;
+                this.$swal(swalConfig.confirm).then((result) => {
+                    if(result.value) {
+                        ProjectService.saveProject(this.projectDto).then(
+                            response => {
+                                this.message = response.data;
+                                this.getProject();
+                                this.resetForm();
+                                this.$swal(swalConfig.successToast);
+                            },
+                            error => {
+                                this.message = error.message;
+                            }
+                        );
+                    } else {
+                        this.$swal.close();
+                        //this.$swal('Cancelled', '', 'info')
                     }
-                );
-
+                })
             },
 
             editProject: function (p) {
@@ -161,16 +171,26 @@
 
             deleteProject: async function (p) {
                 await
-                    ProjectService.deleteProject(p).then(
-                        response => {
-                            this.projectList = response.data;
-                        },
-                        error => {
-                            this.projectList = error.response.data;
+                    this.$swal(swalConfig.confirm).then((result) => {
+                        if(result.value) {
+                            ProjectService.deleteProject(p).then(
+                                response => {
+                                    this.projectList = response.data;
+                                    this.getProject();
+                                    this.resetForm();
+                                    this.$swal(swalConfig.successToast)
+                                },
+                                error => {
+                                    this.projectList = error.response.data;
+                                }
+                            );
+
+                        } else {
+                            this.$swal.close();
+                            //this.$swal('Cancelled', '', 'info')
                         }
-                    );
-                this.getProject();
-                this.resetForm();
+                    })
+
             },
 
             resetForm() {
@@ -217,6 +237,10 @@
                     pagination: pagination,
                     data: _.slice(local, from, to)
                 };
+            },
+
+            alertDisplay() {
+
             }
         }
     };

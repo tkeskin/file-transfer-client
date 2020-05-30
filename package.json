@@ -25,6 +25,7 @@
     "vue-lazyload": "^1.2.6",
     "vue-multiselect": "^2.1.6",
     "vue-router": "^3.3.2",
+    "vue-sweetalert2": "^3.0.5",
     "vue2-transitions": "^0.3.0",
     "vuetable-2": "next",
     "vuex": "^3.4.0"

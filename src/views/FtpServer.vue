@@ -9,7 +9,7 @@
                 <div class="card-body">
                     <ValidationObserver ref="observer" v-slot="{ passes }">
                         <form id="ftpServerForm" name="form"
-                              @submit.prevent="passes(ftpServerSave)"
+                              @submit.prevent="passes(saveftpServer)"
                               @reset="resetForm">
                             <div class="row">
                                 <div class="col-md-6">
@@ -126,8 +126,9 @@
     import FtpServerDto from '../models/ftp-server';
     import PublicService from "../services/public.service";
     import CssConfig from "../components/lib/vuetableConfig";
+    import SwalConfig from "../components/lib/swalConfig";
+    import swalConfig from "../components/lib/swalConfig";
     import _ from "lodash";
-
 
     export default {
         name: 'ftpServer',
@@ -141,6 +142,7 @@
                 message: '',
                 ftpServerList: [],
                 css: CssConfig,
+                swal: SwalConfig,
                 ftpServerFields: [
                     {
                         name: "name",
@@ -200,17 +202,27 @@
                 );
             },
 
-            ftpServerSave() {
-                PublicService.saveFtpServer(this.ftpServerDto).then(
-                    response => {
-                        this.message = response.data;
-                        this.getFtpServer();
-                        this.resetForm();
-                    },
-                    error => {
-                        this.message = error.message;
+            saveftpServer() {
+
+                this.$swal(swalConfig.confirm).then((result) => {
+                    if (result.value) {
+                        PublicService.saveFtpServer(this.ftpServerDto).then(
+                            response => {
+                                this.message = response.data;
+                                this.getFtpServer();
+                                this.resetForm();
+                                this.$swal(swalConfig.successToast);
+                            },
+                            error => {
+                                this.message = error.message;
+                            }
+                        );
+                    } else {
+                        this.$swal.close();
+                        //this.$swal('Cancelled', '', 'info')
                     }
-                );
+                })
+
 
             },
 
@@ -225,16 +237,27 @@
             },
 
             deleteFtpServer: async function (fts) {
+
                 await
-                    PublicService.deleteFtpServer(fts).then(
-                        response => {
-                            this.ftpServerList = response.data.ftpServerList;
-                        },
-                        error => {
-                            this.ftpServerList = error.response.data;
+                    this.$swal(swalConfig.confirm).then((result) => {
+                        if (result.value) {
+                            PublicService.deleteFtpServer(fts).then(
+                                response => {
+                                    this.ftpServerList = response.data.ftpServerList;
+                                    this.$swal(swalConfig.successToast);
+                                    this.getFtpServer();
+                                    this.resetForm();
+                                },
+                                error => {
+                                    this.ftpServerList = error.response.data;
+                                }
+                            );
+
+                        } else {
+                            this.$swal.close();
+                            //this.$swal('Cancelled', '', 'info')
                         }
-                    );
-                this.getFtpServer();
+                    })
             },
 
             resetForm() {

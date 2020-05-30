@@ -145,7 +145,9 @@
     import PublicService from "../services/public.service"
     import ProjectService from "../services/public.service.project";
     import CssConfig from "../components/lib/vuetableConfig";
+    import swalConfig from "../components/lib/swalConfig";
     import _ from "lodash";
+    import SwalConfig from "../components/lib/swalConfig";
 
     export default {
         name: 'job',
@@ -191,6 +193,7 @@
                     }
                 ],
                 css: CssConfig,
+                swal: SwalConfig,
                 sortOrder: [
                     {field: 'createdBy', direction: 'asc'}
                 ],
@@ -239,6 +242,7 @@
         methods: {
 
             getJobList() {
+                
                 PublicService.getJobList().then(
                     response => {
                         this.jobList = response.data.jobList;
@@ -250,6 +254,7 @@
             },
 
             getFtpServer() {
+                
                 PublicService.getFtpServer().then(
                     response => {
                         this.options = response.data.ftpServerList;
@@ -261,23 +266,32 @@
             },
 
             saveJob() {
-                PublicService.saveJob({
-                    "jobDto": {
-                        "createdById": this.valueProject.id,
-                        "createdBy": this.valueProject.name,
-                        "autoStart": this.autoStart,
-                    },
-                    "ftpServerDestination": this.value,
-                    "fileList": this.inputs
-                }).then(
-                    response => {
-                        this.message = response.data;
-                        this.reload();
-                    },
-                    error => {
-                        this.message = error.message;
+
+                this.$swal(swalConfig.confirm).then((result) => {
+                    if (result.value) {
+                        PublicService.saveJob({
+                            "jobDto": {
+                                "createdById": this.valueProject.id,
+                                "createdBy": this.valueProject.name,
+                                "autoStart": this.autoStart,
+                            },
+                            "ftpServerDestination": this.value,
+                            "fileList": this.inputs
+                        }).then(
+                            response => {
+                                this.message = response.data;
+                                this.reload();
+                                this.$swal(swalConfig.successToast);
+                            },
+                            error => {
+                                this.message = error.message;
+                            }
+                        );
+                    } else {
+                        this.$swal.close();
+                        //this.$swal('Cancelled', '', 'info')
                     }
-                );
+                })
 
             },
 
@@ -306,15 +320,25 @@
             },
 
             deleteJob: function (fts) {
-                PublicService.deleteJob(fts).then(
-                    response => {
-                        this.jobList = response.data.jobList;
-                        this.reload();
-                    },
-                    error => {
-                        this.jobList = error.response.data;
+
+                this.$swal(swalConfig.confirm).then((result) => {
+                    if (result.value) {
+                        PublicService.deleteJob(fts).then(
+                            response => {
+                                this.jobList = response.data.jobList;
+                                this.reload();
+                                this.$swal(swalConfig.successToast);
+                            },
+                            error => {
+                                this.jobList = error.response.data;
+                            }
+                        );
+                    } else {
+                        this.$swal.close();
+                        //this.$swal('Cancelled', '', 'info')
                     }
-                );
+                })
+
             },
 
             detail: function (fts) {
