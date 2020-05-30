@@ -93,8 +93,8 @@
                               :api-mode="false"
                               :css="css.table"
                               :sort-order="sortOrder"
-                              :fields="fields"
-                              :per-page="perPage"
+                              :fields="jobFields"
+                              :per-page="css.perPage"
                               :data-manager="dataManager"
                               pagination-path="pagination"
                               @vuetable:pagination-data="onPaginationData">
@@ -132,6 +132,7 @@
             <h6 slot="header" class="modal-title" id="modal-title-default">Job - Detail</h6>
             <div style="overflow: scroll;">
                 <vuetable
+                        :api-mode="false"
                         :data=jobDestinationViewList
                         :fields=jobDestfields>
                 </vuetable>
@@ -143,22 +144,14 @@
 <script>
     import PublicService from "../services/public.service"
     import ProjectService from "../services/public.service.project";
-    import VuetablePagination from "../components/VuetablePaginationBootstrap4.vue";
-    import CssConfig from "../components/lib/VuetableConfig";
-    import Modal from "@/components/Modal";
+    import CssConfig from "../components/lib/vuetableConfig";
     import _ from "lodash";
 
     export default {
         name: 'job',
 
-        components: {
-            Modal,
-            VuetablePagination
-        },
-
         data() {
             return {
-                perPage: 5,
                 submitted: false,
                 successful: false,
                 autoStart: false,
@@ -175,7 +168,7 @@
                     modal: false,
                 },
 
-                fields: [
+                jobFields: [
                     {
                         name: "createdBy",
                         title: '<i class="fa fa-user"></i>  Created By',
@@ -198,7 +191,6 @@
                     }
                 ],
                 css: CssConfig,
-
                 sortOrder: [
                     {field: 'createdBy', direction: 'asc'}
                 ],
@@ -398,11 +390,11 @@
 
                 pagination = this.$refs.vuetable.makePagination(
                     local.length,
-                    this.perPage
+                    this.css.perPage
                 );
 
                 let from = pagination.from - 1;
-                let to = from + this.perPage;
+                let to = from + this.css.perPage;
 
                 return {
                     pagination: pagination,

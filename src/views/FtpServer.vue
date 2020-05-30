@@ -92,8 +92,8 @@
                     <vuetable ref="vuetable"
                               :api-mode="false"
                               :css="css.table"
-                              :fields="fields"
-                              :per-page="perPage"
+                              :fields="ftpServerFields"
+                              :per-page="css.perPage"
                               :data-manager="dataManager"
                               pagination-path="pagination"
                               @vuetable:pagination-data="onPaginationData">
@@ -125,17 +125,12 @@
 <script>
     import FtpServerDto from '../models/ftp-server';
     import PublicService from "../services/public.service";
-    import VuetablePagination from "../components/VuetablePaginationBootstrap4.vue";
-    import CssConfig from "../components/lib/VuetableConfig";
+    import CssConfig from "../components/lib/vuetableConfig";
     import _ from "lodash";
 
 
     export default {
         name: 'ftpServer',
-
-        components: {
-            VuetablePagination
-        },
 
         data() {
             return {
@@ -145,9 +140,8 @@
                 successful: false,
                 message: '',
                 ftpServerList: [],
-                perPage: 5,
                 css: CssConfig,
-                fields: [
+                ftpServerFields: [
                     {
                         name: "name",
                         title: '<i class="fa fa-user"></i> Name'
@@ -298,11 +292,11 @@
 
                 pagination = this.$refs.vuetable.makePagination(
                     local.length,
-                    this.perPage
+                    this.css.perPage
                 );
 
                 let from = pagination.from - 1;
-                let to = from + this.perPage;
+                let to = from + this.css.perPage;
 
                 return {
                     pagination: pagination,

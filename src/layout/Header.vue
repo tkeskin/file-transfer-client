@@ -76,12 +76,9 @@
     </header>
 </template>
 <script>
-    import BaseNav from "@/components/BaseNav";
 
     export default {
-        components: {
-            BaseNav
-        },
+
         computed: {
             currentUser() {
                 return this.$store.state.auth.user;

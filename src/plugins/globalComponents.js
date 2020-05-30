@@ -10,6 +10,9 @@ import BaseSlider from "../components/BaseSlider";
 import BaseSwitch from "../components/BaseSwitch";
 import Card from "../components/Card";
 import Icon from "../components/Icon";
+import Modal from "../components/Modal";
+import BaseNav from "../components/BaseNav";
+import VuetablePagination from "../components/VuetablePagination";
 
 export default {
     install(Vue) {
@@ -25,5 +28,8 @@ export default {
         Vue.component(BaseSwitch.name, BaseSwitch);
         Vue.component(Card.name, Card);
         Vue.component(Icon.name, Icon);
+        Vue.component(Modal.name, Modal);
+        Vue.component(BaseNav.name, BaseNav);
+        Vue.component(VuetablePagination.name, VuetablePagination);
     }
 };

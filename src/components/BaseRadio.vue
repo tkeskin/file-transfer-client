@@ -12,7 +12,7 @@
     </div>
 </template>
 <script>
-    import {randomString} from "./stringUtils";
+    import {randomString} from "./lib/stringUtils";
 
     export default {
         name: "base-radio",

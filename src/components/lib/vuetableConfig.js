@@ -32,5 +32,6 @@ export default {
             next: 'fa fa-chevron-right',
             last: 'fa fa-chevron-right',
         }
-    }
+    },
+    perPage: 3
 }

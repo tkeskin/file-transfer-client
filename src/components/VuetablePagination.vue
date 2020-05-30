@@ -34,6 +34,7 @@
     import VuetablePaginationMixin from "vuetable-2/src/components/VuetablePaginationMixin";
 
     export default {
+        name: "vuetablePagination",
         mixins: [VuetablePaginationMixin]
     };
 </script>

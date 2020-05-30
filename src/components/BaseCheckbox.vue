@@ -14,7 +14,7 @@
     </div>
 </template>
 <script>
-    import {randomString} from "./stringUtils";
+    import {randomString} from "./lib/stringUtils";
 
     export default {
         name: "base-checkbox",
@@ -53,6 +53,7 @@
                     this.$emit("input", check);
                 }
             },
+            // eslint-disable-next-line vue/return-in-computed-property
             inlineClass() {
                 if (this.inline) {
                     return `form-check-inline`;

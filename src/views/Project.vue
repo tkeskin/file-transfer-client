@@ -52,8 +52,8 @@
                     <vuetable ref="vuetable"
                               :api-mode="false"
                               :css="css.table"
-                              :fields=fields
-                              :per-page=perPage
+                              :fields="projectFields"
+                              :per-page="css.perPage"
                               :data-manager="dataManager"
                               pagination-path="pagination"
                               @vuetable:pagination-data="onPaginationData">
@@ -84,27 +84,21 @@
 <script>
     import ProjectDto from '../models/project';
     import ProjectService from "../services/public.service.project"
-    import VuetablePagination from "../components/VuetablePaginationBootstrap4.vue";
-    import CssConfig from "../components/lib/VuetableConfig";
+    import CssConfig from "../components/lib/vuetableConfig";
     import _ from "lodash";
 
     export default {
         name: 'project',
 
-        components: {
-            VuetablePagination,
-        },
-
         data() {
             return {
-                perPage: 3,
                 css: CssConfig,
                 projectDto: new ProjectDto('', '', ''),
                 submitted: false,
                 successful: false,
                 message: '',
                 projectList: [],
-                fields: [
+                projectFields: [
                     {
                         name: "name",
                         title: 'Name'
@@ -190,7 +184,6 @@
 
             onPaginationData(paginationData) {
                 this.$refs.pagination.setPaginationData(paginationData);
-                this.$refs.paginationInfo.setPaginationData(paginationData);
             },
 
             onChangePage(page) {
@@ -214,11 +207,11 @@
 
                 pagination = this.$refs.vuetable.makePagination(
                     local.length,
-                    this.perPage
+                    this.css.perPage
                 );
 
                 let from = pagination.from - 1;
-                let to = from + this.perPage;
+                let to = from + this.css.perPage;
 
                 return {
                     pagination: pagination,
