@@ -125,9 +125,8 @@
 <script>
     import FtpServerDto from '../models/ftp-server';
     import PublicService from "../services/public.service";
-    import CssConfig from "../components/lib/vuetableConfig";
+    import TableConfig from "../components/lib/tableConfig";
     import SwalConfig from "../components/lib/swalConfig";
-    import swalConfig from "../components/lib/swalConfig";
     import _ from "lodash";
 
     export default {
@@ -135,38 +134,38 @@
 
         data() {
             return {
+                css: TableConfig,
+                swalConfig: SwalConfig,
                 ftpServerDto: new FtpServerDto('', '', '', '', '',
                     '', ''),
                 submitted: false,
                 successful: false,
                 message: '',
                 ftpServerList: [],
-                css: CssConfig,
-                swal: SwalConfig,
                 ftpServerFields: [
                     {
                         name: "name",
-                        title: '<i class="fa fa-user"></i> Name'
+                        title: '<i class="fa fa-at"></i> Name'
                     },
                     {
                         name: "protocol",
-                        title: '<i class="fa fa-user"></i> Protocol'
+                        title: '<i class="fa fa-power-off"></i> Protocol'
                     },
                     {
                         name: "hostAdress",
-                        title: '<i class="fa fa-user"></i> Host Adress'
+                        title: '<i class="fa fa-address-book"></i> Host Adress'
                     },
                     {
                         name: "port",
-                        title: '<i class="fa fa-user"></i> Port'
+                        title: '<i class="fa fa-ban"></i> Port'
                     },
                     {
                         name: "username",
-                        title: '<i class="fa fa-user"></i> Username'
+                        title: '<i class="fa fa-bank"></i> Username'
                     },
                     {
                         name: "password",
-                        title: '<i class="fa fa-user"></i> Password',
+                        title: '<i class="fa fa-asterisk"></i> Password',
                         formatter() {
                             return '*****'
                         }
@@ -204,14 +203,14 @@
 
             saveftpServer() {
 
-                this.$swal(swalConfig.confirm).then((result) => {
+                this.$swal(this.swalConfig.confirm).then((result) => {
                     if (result.value) {
                         PublicService.saveFtpServer(this.ftpServerDto).then(
                             response => {
                                 this.message = response.data;
                                 this.getFtpServer();
                                 this.resetForm();
-                                this.$swal(swalConfig.successToast);
+                                this.$swal(this.swalConfig.successToast);
                             },
                             error => {
                                 this.message = error.message;
@@ -239,12 +238,12 @@
             deleteFtpServer: async function (fts) {
 
                 await
-                    this.$swal(swalConfig.confirm).then((result) => {
+                    this.$swal(this.swalConfig.confirm).then((result) => {
                         if (result.value) {
                             PublicService.deleteFtpServer(fts).then(
                                 response => {
                                     this.ftpServerList = response.data.ftpServerList;
-                                    this.$swal(swalConfig.successToast);
+                                    this.$swal(this.swalConfig.successToast);
                                     this.getFtpServer();
                                     this.resetForm();
                                 },
