@@ -4,12 +4,12 @@
         <div class="container">
             <card class="border-0" shadow body-classes="p-3">
                 <div class="card-header" style="background-color: transparent">
-                    Job - Save
+                    Job - Status
                 </div>
                 <div class="card-body">
                     <ValidationObserver ref="observer" v-slot="{ passes }">
                         <form id="jobForm" name="jobForm"
-                              @submit.prevent="passes(saveJob)">
+                              @submit.prevent="passes(queryJob)">
                             <div class="row">
                                 <div class="col-md-6">
                                     <validation-provider rules="required" v-slot="{ errors }">
@@ -26,53 +26,10 @@
                                     </validation-provider>
                                 </div>
                                 <div class="col-md-6">
-                                    <validation-provider rules="required" v-slot="{ errors }">
-                                        <multiselect v-model="value" :options="options"
-                                                     :multiple="true" :close-on-select="false"
-                                                     :clear-on-select="false"
-                                                     :preserve-search="true"
-                                                     placeholder="Select Host"
-                                                     label="name" track-by="name"
-                                                     :preselect-first="false">
-                                        </multiselect>
-                                        <span>{{ errors[0] }}</span>
-                                    </validation-provider>
+                                    <button class="btn btn-success btn-sm" type="submit">Submit
+                                    </button>
                                 </div>
                             </div>
-                            <hr/>
-                            <div class="row" v-for="(input, index) in inputs"
-                                 v-bind:key="index">
-                                <div class="col-md-6">
-                                    <base-input type="text" name="downloadUrl" alternative
-                                                placeholder="File Download Adress"
-                                                v-model="input.downloadUrl"/>
-                                </div>
-                                <div class="col-md-4">
-                                    <base-input type="text" name="uploadPath" alternative
-                                                placeholder="File Upload Path"
-                                                v-model="input.uploadPath"/>
-                                </div>
-                                <div class="col-md-2">
-                                    <base-button type="danger" size="sm"
-                                                 @click="deleteRow(index)">Delete
-                                    </base-button>
-                                </div>
-                            </div>
-                            <base-button type="secondary" size="sm"
-                                         @click="addRow">Add
-                                file
-                            </base-button>
-                            <hr/>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div>
-                                        <base-checkbox class="mb-3" v-model="autoStart">
-                                            Auto Start
-                                        </base-checkbox>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="btn btn-success btn-sm" type="submit">Save</button>
                         </form>
                     </ValidationObserver>
                 </div>
@@ -86,7 +43,7 @@
             <hr/>
             <card class="border-0" shadow body-classes="pt-3">
                 <div class="card-header" style="background-color: transparent">
-                    Job - List
+                    Job - Status - List
                 </div>
                 <div class="card-body">
                     <vuetable ref="vuetable"
@@ -99,18 +56,6 @@
                               pagination-path="pagination"
                               @vuetable:pagination-data="onPaginationData">
                         <div slot="actions" slot-scope="props">
-                            <base-button type="primary" size="sm"
-                                         v-on:click="startJob(props.rowData)">
-                                Upload
-                            </base-button>
-                            <base-button type="primary" size="sm"
-                                         v-on:click="startDownload(props.rowData)">
-                                Download
-                            </base-button>
-                            <base-button type="danger" size="sm"
-                                         v-on:click="deleteJob(props.rowData)">
-                                Delete
-                            </base-button>
                             <base-button type="success" size="sm"
                                          v-on:click="detail(props.rowData)">
                                 Detail
@@ -149,7 +94,7 @@
     import _ from "lodash";
 
     export default {
-        name: 'job',
+        name: 'job-status',
 
         data() {
             return {
@@ -161,11 +106,8 @@
                 message: '',
                 jobList: [],
                 jobDestinationViewList: [],
-                value: [],
                 valueProject: [],
-                options: [],
                 optionsProject: [],
-                inputs: [],
                 appName: '',
                 modals: {
                     modal: false,
@@ -174,11 +116,11 @@
                     {
                         name: "createdBy",
                         title: '<i class="fa fa-user"></i>  Created By',
-                        sortField: 'createdBy'
                     },
                     {
                         name: "createdDateTime",
-                        title: '<i class="fa fa-clock-o"></i> Created time'
+                        title: '<i class="fa fa-clock-o"></i> Created time',
+                        sortField: 'createdDateTime'
                     },
                     {
                         name: "jobStatus",
@@ -193,7 +135,7 @@
                     }
                 ],
                 sortOrder: [
-                    {field: 'createdBy', direction: 'asc'}
+                    {field: 'createdDateTime', direction: 'asc'}
                 ],
 
                 jobDestfields: [
@@ -251,84 +193,21 @@
                 );
             },
 
-            getFtpServer() {
-
-                PublicService.getFtpServer().then(
-                    response => {
-                        this.options = response.data.ftpServerList;
-                    },
-                    error => {
-                        this.options = error.response.data;
-                    }
-                );
-            },
-
-            saveJob() {
+            queryJob() {
 
                 this.$swal(this.swalConfig.confirm).then((result) => {
                     if (result.value) {
-                        PublicService.saveJob({
-                            "jobDto": {
-                                "createdById": this.valueProject.id,
-                                "createdBy": this.valueProject.name,
-                                "autoStart": this.autoStart,
-                            },
-                            "ftpServerDestination": this.value,
-                            "fileList": this.inputs
+                        PublicService.queryJob({
+                            "createdById": this.valueProject.id,
                         }).then(
                             response => {
-                                this.message = response.data;
-                                this.reload();
-                                this.$swal(this.swalConfig.successToast);
-                            },
-                            error => {
-                                this.message = error.message;
-                            }
-                        );
-                    } else {
-                        this.$swal.close();
-                        //this.$swal('Cancelled', '', 'info')
-                    }
-                })
-
-            },
-
-            startJob: function (fts) {
-                PublicService.startJob(fts).then(
-                    response => {
-                        this.jobList = response.data.jobList;
-                        this.reload();
-                    },
-                    error => {
-                        this.jobList = error.response.data;
-                    }
-                );
-            },
-
-            startDownload: function (fts) {
-                PublicService.startDownload(fts).then(
-                    response => {
-                        this.jobList = response.data.jobList;
-                        this.reload();
-                    },
-                    error => {
-                        this.jobList = error.response.data;
-                    }
-                );
-            },
-
-            deleteJob: function (fts) {
-
-                this.$swal(this.swalConfig.confirm).then((result) => {
-                    if (result.value) {
-                        PublicService.deleteJob(fts).then(
-                            response => {
                                 this.jobList = response.data.jobList;
-                                this.reload();
+                                //this.reload();
                                 this.$swal(this.swalConfig.successToast);
                             },
                             error => {
-                                this.jobList = error.response.data;
+                                this.message = error.response.data;
+                                this.$swal(this.swalConfig.errorToast);
                             }
                         );
                     } else {
@@ -351,14 +230,6 @@
                 );
             },
 
-            addRow() {
-                this.inputs.push({downloadUrl: '', uploadPath: ''})
-            },
-
-            deleteRow(index) {
-                this.inputs.splice(index, 1)
-            },
-
             getProject() {
                 ProjectService.getProject().then(
                     response => {
@@ -371,8 +242,6 @@
             },
 
             reload() {
-                this.getJobList();
-                this.getFtpServer();
                 this.getProject();
             },
 
@@ -415,4 +284,3 @@
         }
     };
 </script>
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

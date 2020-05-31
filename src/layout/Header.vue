@@ -15,6 +15,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/job">Job</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/status">Status</a>
+                </li>
             </ul>
 
             <!--            <ul class="navbar-nav align-items-lg-center ml-lg-auto">

@@ -84,18 +84,17 @@
 <script>
     import ProjectDto from '../models/project';
     import ProjectService from "../services/public.service.project"
-    import CssConfig from "../components/lib/vuetableConfig";
+    import TableConfig from "../components/lib/tableConfig";
     import SwalConfig from "../components/lib/swalConfig";
     import _ from "lodash";
-    import swalConfig from "../components/lib/swalConfig";
 
     export default {
         name: 'project',
 
         data() {
             return {
-                css: CssConfig,
-                swal: SwalConfig,
+                css: TableConfig,
+                swalConfig: SwalConfig,
                 projectDto: new ProjectDto('', '', ''),
                 submitted: false,
                 successful: false,
@@ -104,11 +103,11 @@
                 projectFields: [
                     {
                         name: "name",
-                        title: 'Name'
+                        title: '<i class="fa fa-at"></i> Name'
                     },
                     {
                         name: "downloadPath",
-                        title: 'Download Path'
+                        title: '<i class="fa fa-location-arrow"></i> Download Path'
                     },
                     {
                         name: "actions",
@@ -143,14 +142,14 @@
             },
 
             saveProject() {
-                this.$swal(swalConfig.confirm).then((result) => {
-                    if(result.value) {
+                this.$swal(this.swalConfig.confirm).then((result) => {
+                    if (result.value) {
                         ProjectService.saveProject(this.projectDto).then(
                             response => {
                                 this.message = response.data;
                                 this.getProject();
                                 this.resetForm();
-                                this.$swal(swalConfig.successToast);
+                                this.$swal(this.swalConfig.successToast);
                             },
                             error => {
                                 this.message = error.message;
@@ -171,14 +170,14 @@
 
             deleteProject: async function (p) {
                 await
-                    this.$swal(swalConfig.confirm).then((result) => {
-                        if(result.value) {
+                    this.$swal(this.swalConfig.confirm).then((result) => {
+                        if (result.value) {
                             ProjectService.deleteProject(p).then(
                                 response => {
                                     this.projectList = response.data;
                                     this.getProject();
                                     this.resetForm();
-                                    this.$swal(swalConfig.successToast)
+                                    this.$swal(this.swalConfig.successToast)
                                 },
                                 error => {
                                     this.projectList = error.response.data;
@@ -238,10 +237,6 @@
                     data: _.slice(local, from, to)
                 };
             },
-
-            alertDisplay() {
-
-            }
         }
     };
 </script>

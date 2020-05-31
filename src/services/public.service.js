@@ -31,6 +31,10 @@ class PublicService {
         return http.get("/job-destination/" + fts.id);
     }
 
+    queryJob(createdById) {
+        return http.get("/query-job/" + createdById.createdById);
+    }
+
     testConnection(ftpServerDto) {
         return http.post('/test-connection', ftpServerDto)
             .then(response => {

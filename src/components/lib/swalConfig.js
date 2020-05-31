@@ -15,6 +15,15 @@ export default {
         title: 'Success',
         timerProgressBar: true,
         showConfirmButton: false,
-        timer: 1750
+        timer: 1950
+    },
+    errorToast: {
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'Error',
+        timerProgressBar: true,
+        showConfirmButton: false,
+        timer: 1950
     }
 }
