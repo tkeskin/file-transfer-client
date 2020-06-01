@@ -1,7 +1,8 @@
 export default {
     confirm: {
-        title: 'Are you sure?',
+        text: 'Are you sure?',
         type: 'warning',
+        icon: 'info',
         showCancelButton: true,
         confirmButtonText: 'Yes',
         cancelButtonText: 'No',

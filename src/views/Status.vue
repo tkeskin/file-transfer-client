@@ -126,7 +126,7 @@
                         name: "jobStatus",
                         title: '<i class="fa fa-eye"></i> Job status',
                         formatter(value) {
-                            return value === 0 ? 'Beklemede' : 'Tamamlandı'
+                            return value === 0 ? 'Pending' : 'Done'
                         }
                     },
                     {

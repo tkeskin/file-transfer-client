@@ -28,7 +28,7 @@ class PublicService {
     }
 
     detail(fts) {
-        return http.get("/job-destination/" + fts.id);
+        return http.get("/detail-job/" + fts.id);
     }
 
     queryJob(createdById) {
