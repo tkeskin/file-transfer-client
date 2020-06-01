@@ -83,7 +83,7 @@
 
 <script>
     import ProjectDto from '../models/project';
-    import ProjectService from "../services/public.service.project"
+    import ProjectService from "../services/project.service"
     import TableConfig from "../components/lib/tableConfig";
     import SwalConfig from "../components/lib/swalConfig";
     import _ from "lodash";

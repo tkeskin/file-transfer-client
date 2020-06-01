@@ -100,7 +100,7 @@
                               @vuetable:pagination-data="onPaginationData">
                         <div slot="actions" slot-scope="props">
                             <base-button type="primary" size="sm"
-                                         v-on:click="startJob(props.rowData)">
+                                         v-on:click="startUpload(props.rowData)">
                                 Upload
                             </base-button>
                             <base-button type="primary" size="sm"
@@ -112,7 +112,7 @@
                                 Delete
                             </base-button>
                             <base-button type="success" size="sm"
-                                         v-on:click="detail(props.rowData)">
+                                         v-on:click="detailJob(props.rowData)">
                                 Detail
                             </base-button>
                         </div>
@@ -142,8 +142,9 @@
 </template>
 
 <script>
-    import PublicService from "../services/public.service"
-    import ProjectService from "../services/public.service.project";
+    import FtpService from "../services/ftp.service"
+    import JobService from "../services/job.service"
+    import ProjectService from "../services/project.service";
     import TableConfig from "../components/lib/tableConfig";
     import SwalConfig from "../components/lib/swalConfig";
     import _ from "lodash";
@@ -241,7 +242,7 @@
 
             getJobList() {
 
-                PublicService.getJobList().then(
+                JobService.getJobList().then(
                     response => {
                         this.jobList = response.data.jobList;
                     },
@@ -253,7 +254,7 @@
 
             getFtpServer() {
 
-                PublicService.getFtpServer().then(
+                FtpService.getFtpServer().then(
                     response => {
                         this.options = response.data.ftpServerList;
                     },
@@ -267,7 +268,7 @@
 
                 this.$swal(this.swalConfig.confirm).then((result) => {
                     if (result.value) {
-                        PublicService.saveJob({
+                        JobService.saveJob({
                             "jobDto": {
                                 "createdById": this.valueProject.id,
                                 "createdBy": this.valueProject.name,
@@ -293,8 +294,8 @@
 
             },
 
-            startJob: function (fts) {
-                PublicService.startJob(fts).then(
+            startUpload: function (fts) {
+                JobService.startUpload(fts).then(
                     response => {
                         this.jobList = response.data.jobList;
                         this.reload();
@@ -306,7 +307,7 @@
             },
 
             startDownload: function (fts) {
-                PublicService.startDownload(fts).then(
+                JobService.startDownload(fts).then(
                     response => {
                         this.jobList = response.data.jobList;
                         this.reload();
@@ -321,7 +322,7 @@
 
                 this.$swal(this.swalConfig.confirm).then((result) => {
                     if (result.value) {
-                        PublicService.deleteJob(fts).then(
+                        JobService.deleteJob(fts).then(
                             response => {
                                 this.jobList = response.data.jobList;
                                 this.reload();
@@ -339,9 +340,9 @@
 
             },
 
-            detail: function (fts) {
+            detailJob: function (fts) {
                 this.modals.modal = true;
-                PublicService.detail(fts).then(
+                JobService.detailJob(fts).then(
                     response => {
                         this.jobDestinationViewList = response.data.jobDestinationViewList;
                     },

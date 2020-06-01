@@ -87,8 +87,8 @@
 </template>
 
 <script>
-    import PublicService from "../services/public.service"
-    import ProjectService from "../services/public.service.project";
+    import JobService from "../services/job.service"
+    import ProjectService from "../services/project.service";
     import TableConfig from "../components/lib/tableConfig";
     import SwalConfig from "../components/lib/swalConfig";
     import _ from "lodash";
@@ -183,7 +183,7 @@
 
             getJobList() {
 
-                PublicService.getJobList().then(
+                JobService.getJobList().then(
                     response => {
                         this.jobList = response.data.jobList;
                     },
@@ -197,7 +197,7 @@
 
                 this.$swal(this.swalConfig.confirm).then((result) => {
                     if (result.value) {
-                        PublicService.queryJob({
+                        JobService.queryJob({
                             "createdById": this.valueProject.id,
                         }).then(
                             response => {
@@ -220,7 +220,7 @@
 
             detail: function (fts) {
                 this.modals.modal = true;
-                PublicService.detail(fts).then(
+                JobService.detailJob(fts).then(
                     response => {
                         this.jobDestinationViewList = response.data.jobDestinationViewList;
                     },

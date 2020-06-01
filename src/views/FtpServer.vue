@@ -124,7 +124,7 @@
 
 <script>
     import FtpServerDto from '../models/ftp-server';
-    import PublicService from "../services/public.service";
+    import FtpService from "../services/ftp.service";
     import TableConfig from "../components/lib/tableConfig";
     import SwalConfig from "../components/lib/swalConfig";
     import _ from "lodash";
@@ -191,7 +191,7 @@
 
         methods: {
             getFtpServer() {
-                PublicService.getFtpServer().then(
+                FtpService.getFtpServer().then(
                     response => {
                         this.ftpServerList = response.data.ftpServerList;
                     },
@@ -205,7 +205,7 @@
 
                 this.$swal(this.swalConfig.confirm).then((result) => {
                     if (result.value) {
-                        PublicService.saveFtpServer(this.ftpServerDto).then(
+                        FtpService.saveFtpServer(this.ftpServerDto).then(
                             response => {
                                 this.message = response.data;
                                 this.getFtpServer();
@@ -240,7 +240,7 @@
                 await
                     this.$swal(this.swalConfig.confirm).then((result) => {
                         if (result.value) {
-                            PublicService.deleteFtpServer(fts).then(
+                            FtpService.deleteFtpServer(fts).then(
                                 response => {
                                     this.ftpServerList = response.data.ftpServerList;
                                     this.$swal(this.swalConfig.successToast);
@@ -277,7 +277,7 @@
                     if (!success) {
                         return;
                     }
-                    PublicService.testConnection(ftpServerDto).then(
+                    FtpService.testConnection(ftpServerDto).then(
                         response => {
                             this.message = response;
                         },
