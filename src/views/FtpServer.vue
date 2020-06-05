@@ -75,13 +75,6 @@
                     </ValidationObserver>
                 </div>
 
-                <div class="card-footer" style="background-color: transparent">
-                    <base-alert :type="successful ? 'success' : 'default'" v-if="message"
-                                dismissible>
-                        <span class="alert-inner--text"><strong>{{message}}</strong></span>
-                    </base-alert>
-                </div>
-
             </card>
             <hr/>
             <card class="border-0" shadow body-classes="pt-3">
@@ -279,10 +272,11 @@
                     }
                     FtpService.testConnection(ftpServerDto).then(
                         response => {
-                            this.message = response;
+                            if (response) this.$swal(this.swalConfig.successToast);
                         },
                         error => {
                             this.message = error.message;
+                            this.$swal(this.swalConfig.errorToast);
                         }
                     );
                 });

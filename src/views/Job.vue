@@ -99,14 +99,6 @@
                               pagination-path="pagination"
                               @vuetable:pagination-data="onPaginationData">
                         <div slot="actions" slot-scope="props">
-                            <base-button type="primary" size="sm"
-                                         v-on:click="startUpload(props.rowData)">
-                                Upload
-                            </base-button>
-                            <base-button type="primary" size="sm"
-                                         v-on:click="startDownload(props.rowData)">
-                                Download
-                            </base-button>
                             <base-button type="danger" size="sm"
                                          v-on:click="deleteJob(props.rowData)">
                                 Delete
@@ -179,7 +171,8 @@
                     },
                     {
                         name: "createdDateTime",
-                        title: '<i class="fa fa-clock-o"></i> Created time'
+                        title: '<i class="fa fa-clock-o"></i> Created time',
+                        sortField: 'createdDateTime'
                     },
                     {
                         name: "jobStatus",
@@ -194,7 +187,8 @@
                     }
                 ],
                 sortOrder: [
-                    {field: 'createdBy', direction: 'asc'}
+                    {field: 'createdBy', direction: 'asc'},
+                    {field: 'createdDateTime', direction: 'asc'}
                 ],
 
                 jobDestfields: [

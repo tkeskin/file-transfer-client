@@ -9,14 +9,14 @@ import {extend, ValidationObserver, ValidationProvider} from 'vee-validate';
 import {required} from 'vee-validate/dist/rules';
 import Multiselect from 'vue-multiselect';
 import Vuetable from 'vuetable-2';
-import FadeTransition from 'vue2-transitions';
+import Transitions from 'vue2-transitions';
 import VueSweetalert2 from 'vue-sweetalert2';
 
 Vue.config.productionTip = false;
 
 Vue.use(Argon);
 Vue.use(VueSweetalert2);
-Vue.use(FadeTransition);
+Vue.use(Transitions);
 
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
