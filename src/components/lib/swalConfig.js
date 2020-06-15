@@ -16,7 +16,7 @@ export default {
         title: 'Success',
         timerProgressBar: true,
         showConfirmButton: false,
-        timer: 1950
+        timer: 2250
     },
     errorToast: {
         toast: true,
@@ -25,6 +25,6 @@ export default {
         title: 'Error',
         timerProgressBar: true,
         showConfirmButton: false,
-        timer: 1950
+        timer: 2250
     }
 }

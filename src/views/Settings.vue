@@ -4,7 +4,7 @@
         <div class="container">
             <card class="border-0" shadow body-classes="p-3">
                 <div class="card-header" style="background-color: transparent">
-                    Project - Save
+                    Config - Save
                 </div>
                 <div class="card-body">
                     <ValidationObserver ref="observer" v-slot="{ passes }">
@@ -14,17 +14,17 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <validation-provider rules="required" v-slot="{ errors }">
-                                        <base-input type="text" name="name"
-                                                    alternative placeholder="Name"
-                                                    v-model="projectDto.name"/>
+                                        <base-input type="text" name="configKey"
+                                                    alternative placeholder="Key"
+                                                    v-model="appConfigDto.configKey"/>
                                         <span>{{ errors[0] }}</span>
                                     </validation-provider>
                                 </div>
                                 <div class="col-md-6">
                                     <validation-provider rules="required" v-slot="{ errors }">
-                                        <base-input type="text" name="download_path"
-                                                    alternative placeholder="Download Path"
-                                                    v-model="projectDto.downloadPath"/>
+                                        <base-input type="text" name="configValue"
+                                                    alternative placeholder="Value"
+                                                    v-model="appConfigDto.configValue"/>
                                         <span>{{ errors[0] }}</span>
                                     </validation-provider>
                                 </div>
@@ -39,13 +39,13 @@
             <hr/>
             <card class="border-0" shadow body-classes="pt-3">
                 <div class="card-header" style="background-color: transparent">
-                    Project - List
+                    Config - List
                 </div>
                 <div class="card-body">
                     <vuetable ref="vuetable"
                               :api-mode="false"
                               :css="css.table"
-                              :fields="projectFields"
+                              :fields="appConfigFields"
                               :per-page="css.perPage"
                               :data-manager="dataManager"
                               pagination-path="pagination"
@@ -75,32 +75,32 @@
 </template>
 
 <script>
-    import ProjectDto from '../models/project';
-    import ProjectService from "../services/project.service"
+    import AppConfigDto from '../models/app-config';
+    import AppConfigService from "../services/appconfig.service"
     import TableConfig from "../components/lib/tableConfig";
     import SwalConfig from "../components/lib/swalConfig";
     import _ from "lodash";
 
     export default {
-        name: 'project',
+        name: 'app-config',
 
         data() {
             return {
                 css: TableConfig,
                 swalConfig: SwalConfig,
-                projectDto: new ProjectDto('', '', ''),
+                appConfigDto: new AppConfigDto('', ''),
                 submitted: false,
                 successful: false,
                 message: '',
-                projectList: [],
-                projectFields: [
+                appConfigList: [],
+                appConfigFields: [
                     {
-                        name: "name",
-                        title: '<i class="fa fa-at"></i> Name'
+                        name: "configKey",
+                        title: '<i class="fa fa-at"></i> Key'
                     },
                     {
-                        name: "downloadPath",
-                        title: '<i class="fa fa-location-arrow"></i> Download Path'
+                        name: "configValue",
+                        title: '<i class="fa fa-location-arrow"></i> Value'
                     },
                     {
                         name: "actions",
@@ -112,7 +112,7 @@
 
         watch: {
             // eslint-disable-next-line no-unused-vars
-            projectList(newVal, oldVal) {
+            appConfigList(newVal, oldVal) {
                 this.$refs.vuetable.refresh();
             }
         },
@@ -124,12 +124,12 @@
         methods: {
 
             getProject() {
-                ProjectService.getProject().then(
+                AppConfigService.getAppConfig().then(
                     response => {
-                        this.projectList = response.data.projectList;
+                        this.appConfigList = response.data.appConfigList;
                     },
                     error => {
-                        this.projectList = error.response.data;
+                        this.appConfigList = error.response.data;
                     }
                 );
             },
@@ -137,7 +137,7 @@
             saveProject() {
                 this.$swal(this.swalConfig.confirm).then((result) => {
                     if (result.value) {
-                        ProjectService.saveProject(this.projectDto).then(
+                        AppConfigService.saveAppConfig(this.appConfigDto).then(
                             response => {
                                 this.message = response.data;
                                 this.getProject();
@@ -157,24 +157,23 @@
             },
 
             editProject: function (p) {
-                this.projectDto.id = p.id;
-                this.projectDto.name = p.name;
-                this.projectDto.downloadPath = p.downloadPath;
+                this.appConfigDto.configKey = p.configKey;
+                this.appConfigDto.configValue = p.configValue;
             },
 
             deleteProject: async function (p) {
                 await
                     this.$swal(this.swalConfig.confirm).then((result) => {
                         if (result.value) {
-                            ProjectService.deleteProject(p).then(
+                            AppConfigService.deleteAppConfig(p).then(
                                 response => {
-                                    this.projectList = response.data;
+                                    this.appConfigList = response.data;
                                     this.getProject();
                                     this.resetForm();
                                     this.$swal(this.swalConfig.successToast)
                                 },
                                 error => {
-                                    this.projectList = error.response.data;
+                                    this.appConfigList = error.response.data;
                                 }
                             );
 
@@ -187,9 +186,8 @@
             },
 
             resetForm() {
-                this.projectDto.id = "";
-                this.projectDto.name = "";
-                this.projectDto.downloadPath = "";
+                this.appConfigDto.configKey = "";
+                this.appConfigDto.configValue = "";
                 requestAnimationFrame(() => {
                     this.$refs.observer.reset();
                 });
@@ -204,9 +202,9 @@
             },
 
             dataManager(sortOrder, pagination) {
-                if (this.projectList.length < 1) return;
+                if (this.appConfigList.length < 1) return;
 
-                let local = this.projectList;
+                let local = this.appConfigList;
 
                 // sortOrder can be empty, so we have to check for that as well
                 if (sortOrder.length > 0) {

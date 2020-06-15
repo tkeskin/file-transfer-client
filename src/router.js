@@ -7,6 +7,7 @@ import FtpServer from "./views/FtpServer";
 import Job from "./views/Job";
 import Status from "./views/Status";
 import Project from "./views/Project";
+import Settings from "./views/Settings";
 
 Vue.use(Router);
 
@@ -62,13 +63,21 @@ export const router = new Router({
                 default: Status,
                 footer: Footer
             }
+        },
+        {
+            path: '/settings',
+            components: {
+                header: Header,
+                default: Settings,
+                footer: Footer
+            }
         }
     ]
 });
 
 router.beforeEach((to, from, next) => {
     const publicPages = ['/login', '/', '/home', '/register', "/ftp-server", "/job",
-        "/project", "/status"];
+        "/project", "/status", "/settings"];
     const authRequired = !publicPages.includes(to.path);
     const loggedIn = localStorage.getItem('user');
 
