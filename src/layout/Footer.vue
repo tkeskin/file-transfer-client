@@ -6,7 +6,7 @@
                 <div class="col-md-6">
                     <div class="copyright">
                         &copy; {{year}}
-                        <a href="#" target="_blank" rel="noopener">aa</a>
+                        <a href="#" target="_blank" rel="noopener">tkeskin</a>
                     </div>
                 </div>
             </div>

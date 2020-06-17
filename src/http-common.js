@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const user = "aafiletransfer";
+const user = "filetransfer";
 const pass = "1qaz2wsX!";
 const authorizationBasic = btoa(user + ':' + pass);
 
